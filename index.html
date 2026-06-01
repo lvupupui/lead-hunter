@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Professional AI automation & full-stack development services. Python, Web Scraping, AI Agents, Workflow Automation, API Integration.">
+<title>AI Automation Services — Build What You Need</title>
+<style>
+:root {
+  --bg: #08080e;
+  --card: #111118;
+  --border: #1e1e2e;
+  --accent: #6366f1;
+  --text: #c0c0c0;
+  --white: #fff;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+.lang-switch{position:fixed;top:15px;right:20px;z-index:100;display:flex;gap:8px}
+.lang-switch button{padding:5px 12px;border-radius:15px;border:1px solid var(--border);background:var(--card);color:#888;font-size:0.75rem;cursor:pointer;transition:.15s}
+.lang-switch button.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.hero{padding:80px 20px 40px;text-align:center;max-width:700px;margin:0 auto}
+.hero .emoji{font-size:3rem;margin-bottom:15px}
+.hero h1{font-size:2.2rem;color:var(--white);margin-bottom:12px;line-height:1.3}
+.hero .subtitle{color:#888;font-size:1rem;line-height:1.6}
+.services{max-width:800px;margin:0 auto 40px;padding:0 20px;display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.service-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:18px;text-align:center;cursor:pointer;transition:.15s}
+.service-card:hover{border-color:var(--accent);background:#18181e}
+.service-card.selected{border-color:var(--accent);background:#6366f112}
+.service-card .icon{font-size:1.5rem;margin-bottom:8px}
+.service-card .name{font-size:0.9rem;color:var(--white);margin-bottom:4px}
+.service-card .desc{font-size:0.72rem;color:#666}
+.form-section{max-width:600px;margin:0 auto 60px;padding:0 20px}
+.form-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:30px}
+.form-card h2{font-size:1.1rem;color:var(--white);margin-bottom:20px}
+.form-group{margin-bottom:16px}
+.form-group label{display:block;font-size:0.8rem;color:#888;margin-bottom:6px}
+.form-group input,.form-group textarea{width:100%;padding:12px;background:#0a0a10;border:1px solid #2a2a3e;border-radius:8px;color:#fff;font-size:0.9rem;outline:none;font-family:inherit}
+.form-group input:focus,.form-group textarea:focus{border-color:var(--accent)}
+.form-group textarea{min-height:110px;resize:vertical}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.btn{width:100%;padding:14px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:1rem;cursor:pointer;transition:.15s}
+.btn:hover{opacity:0.9}
+.btn:active{transform:scale(0.98)}
+.btn:disabled{opacity:0.5;cursor:not-allowed}
+.success{display:none;text-align:center;padding:30px}
+.success h3{color:#4ade80;font-size:1.3rem;margin-bottom:8px}
+.footer{text-align:center;padding:30px 20px;color:#444;font-size:0.8rem}
+.footer a{color:var(--accent);text-decoration:none}
+.pricing{max-width:600px;margin:0 auto 30px;padding:0 20px;display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.price-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center}
+.price-card h4{color:var(--white);font-size:0.9rem;margin-bottom:6px}
+.price-card .amount{font-size:1.4rem;color:var(--accent);font-weight:700}
+@media(max-width:500px){
+  .hero h1{font-size:1.5rem}
+  .form-row{grid-template-columns:1fr}
+  .pricing{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="lang-switch">
+  <button onclick="switchLang('en')" id="btn-en" class="active">EN</button>
+  <button onclick="switchLang('zh')" id="btn-zh">中文</button>
+</div>
+
+<div class="hero">
+  <div class="emoji" data-en="🚀" data-zh="🚀">🚀</div>
+  <h1 data-en="AI Automation & Full-Stack Development" data-zh="AI 自动化 & 全栈开发服务">AI Automation & Full-Stack Development</h1>
+  <div class="subtitle" data-en="Python · AI Agents · Web Scraping · Workflows · API Integrations · Chrome Extensions · SaaS MVPs. I build what you need, fast and reliable." data-zh="Python · AI 智能体 · 数据采集 · 工作流 · API 集成 · 浏览器插件 · SaaS MVP。你说需求，我来实现。">Python · AI Agents · Web Scraping · Workflows · API Integrations · Chrome Extensions · SaaS MVPs</div>
+</div>
+
+<div class="services" id="services"></div>
+
+<div class="pricing">
+  <div class="price-card">
+    <h4 data-en="Small Task" data-zh="小型任务">Small Task</h4>
+    <div class="amount" data-en="$50-300" data-zh="¥300-2000">$50-300</div>
+    <div style="color:#666;font-size:0.75rem;margin-top:4px" data-en="Scripts, scrapers, bug fixes" data-zh="脚本、爬虫、修bug">Scripts, scrapers, bug fixes</div>
+  </div>
+  <div class="price-card">
+    <h4 data-en="Full Project" data-zh="完整项目">Full Project</h4>
+    <div class="amount" data-en="$500-5000" data-zh="¥3000-30000">$500-5000</div>
+    <div style="color:#666;font-size:0.75rem;margin-top:4px" data-en="Web apps, AI agents, automation" data-zh="Web应用、AI智能体、自动化">Web apps, AI agents, automation</div>
+  </div>
+</div>
+
+<div class="form-section">
+  <div class="form-card">
+    <h2 data-en="📩 Describe Your Project" data-zh="📩 描述你的需求">📩 Describe Your Project</h2>
+    <form id="leadForm">
+      <div class="form-row">
+        <div class="form-group">
+          <label data-en="Your Name" data-zh="你的名字">Your Name</label>
+          <input type="text" name="name" required data-en-placeholder="John" data-zh-placeholder="张三">
+        </div>
+        <div class="form-group">
+          <label data-en="Email / Contact" data-zh="邮箱 / 联系方式">Email / Contact</label>
+          <input type="text" name="contact" required data-en-placeholder="you@email.com or Telegram/WeChat" data-zh-placeholder="邮箱 或 微信/Telegram">
+        </div>
+      </div>
+      <div class="form-group">
+        <label data-en="Project Type" data-zh="项目类型">Project Type</label>
+        <input type="text" name="type" id="typeField" readonly style="cursor:pointer" data-en-placeholder="Click to select service(s) above ↑" data-zh-placeholder="点击上方服务卡片选择 ↑">
+      </div>
+      <div class="form-group">
+        <label data-en="What do you need?" data-zh="具体需求">What do you need?</label>
+        <textarea name="description" required data-en-placeholder="Describe your project, timeline, budget... The more details, the better." data-zh-placeholder="描述你的项目、时间要求、预算...越详细越好。"></textarea>
+      </div>
+      <button type="submit" class="btn" data-en="Send → 24h Reply" data-zh="提交需求 → 24h内回复">Send → 24h Reply</button>
+    </form>
+  </div>
+  <div class="success" id="successMsg">
+    <h3>✅ Received!</h3>
+    <p data-en="I'll reply within 24 hours." data-zh="我会在24小时内回复你。"></p>
+  </div>
+</div>
+
+<div class="footer">
+  <p data-en="Or reach me directly: <a href='mailto:leolijinwxy@gmail.com'>leolijinwxy@gmail.com</a> | WeChat available on request" data-zh="或直接联系：<a href='mailto:leolijinwxy@gmail.com'>leolijinwxy@gmail.com</a> | 微信可私"></p>
+</div>
+
+<script>
+const I18N = {
+  en: {
+    services: [
+      {icon:"🤖",name:"AI Agent Development",desc:"LangChain, AutoGPT, custom LLM agents"},
+      {icon:"⚡",name:"Workflow Automation",desc:"n8n, Make.com, Zapier, custom pipelines"},
+      {icon:"🕸️",name:"Web Scraping & Data",desc:"Scrapy, Playwright, data pipelines, APIs"},
+      {icon:"🌐",name:"Full-Stack Web Apps",desc:"React, Next.js, FastAPI, Flask, Django"},
+      {icon:"🔌",name:"API Integration",desc:"REST, GraphQL, webhooks, third-party APIs"},
+      {icon:"🧩",name:"Chrome Extensions",desc:"Browser plugins, automation, devtools"},
+      {icon:"💬",name:"Chatbots & Bots",desc:"Discord, Telegram, WeChat, Slack bots"},
+      {icon:"📊",name:"Dashboards & Reports",desc:"Real-time dashboards, analytics, PDF reports"},
+      {icon:"🛠️",name:"SaaS MVP",desc:"Prototype to production, fast iterations"},
+      {icon:"🔍",name:"SEO & Content Tools",desc:"SEO audit, content generators, rank trackers"},
+      {icon:"📧",name:"Email Automation",desc:"Cold outreach, newsletters, transactional emails"},
+      {icon:"🗄️",name:"Database & Backend",desc:"PostgreSQL, MongoDB, Redis, microservices"},
+    ]
+  },
+  zh: {
+    services: [
+      {icon:"🤖",name:"AI 智能体开发",desc:"LangChain, AutoGPT, 自定义LLM应用"},
+      {icon:"⚡",name:"工作流自动化",desc:"n8n, Make.com, Zapier, 定制流程"},
+      {icon:"🕸️",name:"数据采集 & 爬虫",desc:"Scrapy, Playwright, 数据管线, API"},
+      {icon:"🌐",name:"Web 全栈开发",desc:"React, Next.js, FastAPI, Flask, Django"},
+      {icon:"🔌",name:"API 集成对接",desc:"REST, GraphQL, Webhook, 第三方API"},
+      {icon:"🧩",name:"浏览器插件",desc:"Chrome扩展, 自动化工具, 开发者工具"},
+      {icon:"💬",name:"聊天机器人",desc:"Discord, Telegram, 微信, Slack Bot"},
+      {icon:"📊",name:"仪表盘 & 报表",desc:"实时仪表盘, 数据分析, PDF报告"},
+      {icon:"🛠️",name:"SaaS 快速原型",desc:"从原型到产品，快速迭代"},
+      {icon:"🔍",name:"SEO & 内容工具",desc:"SEO审计, 内容生成, 排名追踪"},
+      {icon:"📧",name:"邮件自动化",desc:"邮件外发, 订阅推送, 事务邮件"},
+      {icon:"🗄️",name:"数据库 & 后端",desc:"PostgreSQL, MongoDB, Redis, 微服务"},
+    ]
+  }
+};
+
+let currentLang = 'en';
+let selectedServices = [];
+
+function switchLang(lang) {
+  currentLang = lang;
+  document.getElementById('btn-en').classList.toggle('active', lang==='en');
+  document.getElementById('btn-zh').classList.toggle('active', lang==='zh');
+  renderServices();
+  document.querySelectorAll('[data-en]').forEach(el => {
+    el.textContent = el.getAttribute(`data-${lang}`);
+  });
+  document.querySelectorAll('[data-en-placeholder]').forEach(el => {
+    el.placeholder = el.getAttribute(`data-${lang}-placeholder`);
+  });
+}
+
+function renderServices() {
+  const container = document.getElementById('services');
+  const services = I18N[currentLang].services;
+  container.innerHTML = services.map((s,i) => `
+    <div class="service-card${selectedServices.includes(i)?' selected':''}" onclick="toggleService(${i})">
+      <div class="icon">${s.icon}</div>
+      <div class="name">${s.name}</div>
+      <div class="desc">${s.desc}</div>
+    </div>
+  `).join('');
+  updateTypeField();
+}
+
+function toggleService(i) {
+  if (selectedServices.includes(i)) selectedServices = selectedServices.filter(x=>x!==i);
+  else selectedServices.push(i);
+  renderServices();
+}
+
+function updateTypeField() {
+  const names = selectedServices.map(i => I18N[currentLang].services[i].name);
+  document.getElementById('typeField').value = names.join(' + ') || '';
+}
+
+document.getElementById('leadForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  const btn = this.querySelector('.btn');
+  btn.disabled = true;
+  btn.textContent = currentLang==='zh' ? '提交中...' : 'Sending...';
+  const fd = new FormData(this);
+  fd.set('type', selectedServices.map(i=>I18N[currentLang].services[i].name).join(', '));
+  const data = Object.fromEntries(fd);
+
+  try {
+    const resp = await fetch('https://formspree.io/f/xrbpgdop', {
+      method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(data)
+    });
+    if (resp.ok) {
+      document.querySelector('.form-card').style.display='none';
+      document.getElementById('successMsg').style.display='block';
+    } else throw new Error('Failed');
+  } catch(err) {
+    const body = `Services: ${data.type}%0D%0A%0D%0A${data.description}`;
+    window.location.href = `mailto:leolijinwxy@gmail.com?subject=Project Inquiry - ${data.name}&body=${body}`;
+    document.querySelector('.form-card').style.display='none';
+    document.getElementById('successMsg').style.display='block';
+  }
+});
+
+switchLang('en');
+</script>
+</body>
+</html>

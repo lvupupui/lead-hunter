@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>获客仪表盘 — Lead Hunter</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",sans-serif;background:#08080e;color:#c0c0c0;min-height:100vh}
+.app{display:flex;min-height:100vh}
+.sidebar{width:220px;background:#0d0d16;border-right:1px solid #1a1a2e;padding:20px 0;flex-shrink:0}
+.sidebar h2{font-size:0.9rem;color:#6366f1;padding:0 20px;margin-bottom:20px;letter-spacing:1px}
+.sidebar nav a{display:block;padding:10px 20px;color:#888;text-decoration:none;font-size:0.85rem;border-left:2px solid transparent;transition:.15s}
+.sidebar nav a:hover,.sidebar nav a.active{color:#fff;border-left-color:#6366f1;background:rgba(99,102,241,0.08)}
+.main{flex:1;padding:30px;overflow-y:auto}
+.header{margin-bottom:30px}
+.header h1{font-size:1.6rem;color:#fff;margin-bottom:4px}
+.header .sub{color:#666;font-size:0.85rem}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:15px;margin-bottom:30px}
+.statcard{background:#111118;border:1px solid #1e1e2e;border-radius:10px;padding:20px}
+.statcard .label{font-size:0.75rem;color:#666;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.statcard .value{font-size:1.8rem;font-weight:700;color:#fff}
+.statcard .delta{font-size:0.78rem;margin-top:4px}
+.delta.up{color:#4ade80}
+.delta.down{color:#f87171}
+.strategy-box{background:#111118;border:1px solid #1e1e2e;border-radius:10px;padding:20px;margin-bottom:20px}
+.strategy-box h3{font-size:0.95rem;color:#fff;margin-bottom:12px}
+.strategy-box .channels{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.channel-tag{padding:5px 12px;border-radius:15px;font-size:0.75rem;background:#1a1a2e;color:#888;border:1px solid #2a2a3e}
+.channel-tag.active{background:#1e1e3e;color:#6366f1;border-color:#6366f1}
+.channel-tag.disabled{opacity:0.4;text-decoration:line-through}
+.keywords{display:flex;flex-wrap:wrap;gap:6px}
+.kw{padding:3px 10px;border-radius:10px;font-size:0.7rem;background:#6366f110;color:#6366f1;border:1px solid #6366f130}
+.kw.hot{background:#f8717120;color:#f87171;border-color:#f8717130}
+table{width:100%;border-collapse:collapse;background:#111118;border-radius:10px;overflow:hidden;border:1px solid #1e1e2e}
+th{text-align:left;padding:12px 15px;font-size:0.75rem;color:#666;text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid #1e1e2e;white-space:nowrap}
+td{padding:12px 15px;font-size:0.82rem;border-bottom:1px solid #151520}
+tr:hover{background:#151520}
+.score{display:inline-block;padding:2px 8px;border-radius:8px;font-size:0.7rem;font-weight:700}
+.score.hot{background:#f8717120;color:#f87171}
+.score.good{background:#fbbf2420;color:#fbbf24}
+.score.ok{background:#6366f120;color:#6366f1}
+.source-tag{font-size:0.7rem;padding:2px 8px;border-radius:8px}
+.source-tag.github{background:#333;color:#fff}
+.source-tag.reddit{background:#ff450020;color:#ff4500}
+.source-tag.hn{background:#ff660020;color:#ff6600}
+.source-tag.zhihu{background:#0066ff20;color:#0066ff}
+.source-tag.xhs{background:#ff244220;color:#ff2442}
+.source-tag.weibo{background:#e6162d20;color:#e6162d}
+.status{font-size:0.7rem;padding:2px 8px;border-radius:8px}
+.status.new{background:#6366f120;color:#6366f1}
+.status.replied{background:#4ade8020;color:#4ade80}
+.status.ignored{background:#666;color:#999}
+.empty{text-align:center;padding:60px 20px;color:#555}
+.empty .icon{font-size:3rem;margin-bottom:15px}
+.tab-bar{display:flex;gap:0;margin-bottom:20px;border-bottom:1px solid #1e1e2e}
+.tab{padding:10px 20px;font-size:0.82rem;color:#666;cursor:pointer;border-bottom:2px solid transparent;transition:.15s}
+.tab:hover{color:#999}
+.tab.active{color:#fff;border-bottom-color:#6366f1}
+@media(max-width:768px){
+  .sidebar{display:none}
+  .stats{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+  <h2>📊 获客仪表盘</h2>
+  <nav>
+    <a href="#dashboard" class="active">总览</a>
+    <a href="#leads">线索列表</a>
+    <a href="#channels">渠道分析</a>
+    <a href="#strategy">策略配置</a>
+    <a href="#history">历史记录</a>
+  </nav>
+  <div style="position:absolute;bottom:20px;left:20px;font-size:0.7rem;color:#444">
+    Last update: <span id="lastUpdate">--</span><br>
+    Next scan: <span id="nextScan">--</span>
+  </div>
+</aside>
+
+<main class="main">
+  <div class="header">
+    <h1>🎯 Lead Hunter 获客仪表盘</h1>
+    <div class="sub">自动监控 · 智能筛选 · 微信推送 — 每6小时扫描一次</div>
+  </div>
+
+  <!-- 统计卡片 -->
+  <div class="stats">
+    <div class="statcard">
+      <div class="label">今日扫描</div>
+      <div class="value" id="scanned">--</div>
+      <div class="delta up" id="scannedDelta"></div>
+    </div>
+    <div class="statcard">
+      <div class="label">匹配线索</div>
+      <div class="value" id="matched">--</div>
+      <div class="delta up" id="matchedDelta"></div>
+    </div>
+    <div class="statcard">
+      <div class="label">已回复</div>
+      <div class="value" id="replied">--</div>
+      <div class="delta" id="repliedDelta"></div>
+    </div>
+    <div class="statcard">
+      <div class="label">转化线索</div>
+      <div class="value" id="converted">--</div>
+      <div class="delta up" id="convertedDelta"></div>
+    </div>
+  </div>
+
+  <!-- 策略总览 -->
+  <div class="strategy-box">
+    <h3>⚙️ 当前策略</h3>
+    <div style="margin-bottom:10px">
+      <span style="color:#888;font-size:0.8rem">活跃渠道：</span>
+      <div class="channels" id="activeChannels"></div>
+    </div>
+    <div>
+      <span style="color:#888;font-size:0.8rem">匹配关键词：</span>
+      <div class="keywords" id="activeKeywords"></div>
+    </div>
+  </div>
+
+  <!-- 线索表格 -->
+  <div class="tab-bar">
+    <div class="tab active" onclick="filterTab('all',this)">全部</div>
+    <div class="tab" onclick="filterTab('new',this)">新线索</div>
+    <div class="tab" onclick="filterTab('replied',this)">已回复</div>
+    <div class="tab" onclick="filterTab('hot',this)">🔥 高分</div>
+  </div>
+
+  <table>
+    <thead>
+      <tr><th>时间</th><th>渠道</th><th>项目</th><th>分数</th><th>业务类型</th><th>状态</th><th>操作</th></tr>
+    </thead>
+    <tbody id="leadsTable">
+      <tr><td colspan="7" class="empty">
+        <div class="icon">📡</div>
+        <div>等待数据刷新...<br><small style="color:#444">监控脚本每6小时运行一次，首次数据即将到来</small></div>
+      </td></tr>
+    </tbody>
+  </table>
+</main>
+</div>
+
+<script>
+// ─── 配置 ───────────────────────────────────────
+const CONFIG = {
+  channels: {
+    github:   {name:"GitHub Issues",   active:true, icon:"🐙", risk:"低"},
+    reddit:   {name:"Reddit r/forhire",active:true, icon:"🤖", risk:"低"},
+    hn:       {name:"Hacker News",     active:true, icon:"🔶", risk:"低"},
+    zhihu:    {name:"知乎",            active:false,icon:"💎", risk:"中"},
+    xhs:      {name:"小红书",          active:false,icon:"📕", risk:"高"},
+    weibo:    {name:"微博",            active:false,icon:"📢", risk:"中"},
+    douyin:   {name:"抖音",            active:false,icon:"🎵", risk:"高"},
+    v2ex:     {name:"V2EX",           active:false,icon:"💬", risk:"低"},
+  },
+  keywords: {
+    hot: ["AI Agent","自动化","爬虫","Python","API对接","Web全栈","n8n","工作流"],
+    normal: ["接单","外包","开发","后端","前端","React","FastAPI","微信机器人","Discord Bot","Telegram Bot"]
+  },
+  bizTypes: ["AI Agent开发","自动化工作流","Web全栈","数据采集","API集成","微信机器人","Chrome插件","SaaS MVP"],
+  schedule: "每6小时 (0,6,12,18点)",
+  pushTarget: "微信"
+};
+
+// ─── 数据加载 ───────────────────────────────────
+async function loadData() {
+  try {
+    const resp = await fetch('lead-data.json?' + Date.now());
+    if (!resp.ok) throw new Error('No data');
+    const data = await resp.json();
+    renderStats(data.stats);
+    renderLeads(data.leads);
+    document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString();
+  } catch(e) {
+    // 无数据时显示默认
+    document.getElementById('scanned').textContent = '0';
+    document.getElementById('matched').textContent = '0';
+    document.getElementById('replied').textContent = '0';
+    document.getElementById('converted').textContent = '0';
+    document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString();
+  }
+  document.getElementById('nextScan').textContent = CONFIG.schedule;
+}
+
+function renderStats(stats) {
+  if (!stats) return;
+  document.getElementById('scanned').textContent = stats.scanned || 0;
+  document.getElementById('matched').textContent = stats.matched || 0;
+  document.getElementById('replied').textContent = stats.replied || 0;
+  document.getElementById('converted').textContent = stats.converted || 0;
+}
+
+function renderLeads(leads) {
+  if (!leads || !leads.length) return;
+  const tbody = document.getElementById('leadsTable');
+  tbody.innerHTML = leads.map(l => `
+    <tr data-status="${l.status||'new'}" data-score="${l.score||0}">
+      <td style="font-size:0.78rem;color:#666">${l.time||'--'}</td>
+      <td><span class="source-tag ${l.source||''}">${l.source||'--'}</span></td>
+      <td>
+        <div style="color:#ddd;font-size:0.82rem">${l.title||'--'}</div>
+        <div style="font-size:0.72rem;color:#555;margin-top:2px">${(l.body||'').substring(0,80)}</div>
+        ${l.url ? `<a href="${l.url}" target="_blank" style="font-size:0.7rem;color:#6366f1;text-decoration:none">🔗 打开</a>` : ''}
+      </td>
+      <td><span class="score ${l.score>=70?'hot':l.score>=50?'good':'ok'}">${l.score||0}</span></td>
+      <td><span style="font-size:0.75rem;color:#888">${l.bizType||'--'}</span></td>
+      <td><span class="status ${l.status||'new'}">${l.status==='replied'?'已回复':l.status==='ignored'?'已忽略':'新'}</span></td>
+      <td>
+        <button onclick="markReplied('${l.id}')" style="background:#4ade8020;color:#4ade80;border:1px solid #4ade8030;padding:4px 10px;border-radius:6px;font-size:0.7rem;cursor:pointer;margin-right:4px">✓ 已回复</button>
+        <button onclick="markIgnored('${l.id}')" style="background:#666;color:#999;border:1px solid #444;padding:4px 10px;border-radius:6px;font-size:0.7rem;cursor:pointer">✕ 忽略</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+// ─── 筛选 ───────────────────────────────────────
+function filterTab(type, el) {
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('#leadsTable tr').forEach(tr => {
+    if (type === 'all') { tr.style.display = ''; return; }
+    if (type === 'new') tr.style.display = tr.dataset.status === 'new' ? '' : 'none';
+    if (type === 'replied') tr.style.display = tr.dataset.status === 'replied' ? '' : 'none';
+    if (type === 'hot') tr.style.display = parseInt(tr.dataset.score||0) >= 70 ? '' : 'none';
+  });
+}
+
+function markReplied(id) { updateStatus(id, 'replied'); }
+function markIgnored(id) { updateStatus(id, 'ignored'); }
+function updateStatus(id, status) {
+  // TODO: persist to JSON
+  console.log('Status update:', id, status);
+}
+
+// ─── 初始化 ─────────────────────────────────────
+// 渲染渠道标签
+document.getElementById('activeChannels').innerHTML = Object.entries(CONFIG.channels)
+  .map(([k,v]) => `<span class="channel-tag ${v.active?'active':'disabled'}">${v.icon} ${v.name}</span>`).join('');
+
+document.getElementById('activeKeywords').innerHTML = 
+  CONFIG.keywords.hot.map(k => `<span class="kw hot">${k}</span>`).join('') +
+  CONFIG.keywords.normal.map(k => `<span class="kw">${k}</span>`).join('');
+
+loadData();
+</script>
+</body>
+</html>
